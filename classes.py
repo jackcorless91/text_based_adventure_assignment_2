@@ -42,6 +42,7 @@ class player_inventory:
 class game:
   def __init__(self):
     self.is_running = True
+    self.inventory = player_inventory()
 
   def start_game(self):
     print("Welcome to Jack's house of horrors.")
@@ -52,26 +53,65 @@ class game:
 
     if player_input == "new":
       print("Starting new game...\n")
-      self.main_game_loop()
+      self.intro_game_loop()
     elif player_input == "continue":
       print("continuing from last save...")
 
-  def main_game_loop(self):
+  def intro_game_loop(self):
     while self.is_running:
       print("First, let's start with your name.")
       name = input()
-      print(f"Okay {name}, let's begin.")
+      print(f"Firstly {name}, here are some universal commands you can access throughout your journey.")
+      print("Options: exit, inventory.\n")
+      print(f"Okay {name}, type 'start' to begin.\n")
+      command = input().lower()
+      self.player_commands(command)
+
       self.is_running = False
+      #close loop for now bc havent written more
       
+
+  def main_game_loop(self):
+    print("You wake up in a dimly lit room on a cold concrete floor with nothing but a bed.")
+    print("As you stand you notice a large windowless door and an air vent close to the bed.")
+    print("What would you like to do?")
+    print("Go for the door, check out vent or explore the room.")
+    print("Options: door/vent/explore")
+    
+
+
+  # def player_commands(self, command):
+  #   command = command.lower()
+  #   if command == "exit":
+  #     self.playing = False
+  #     print("You are now exiting the game...")
+  #   elif command == "inventory":
+  #      self.inventory.view_inventory()
+  #   if command == "start":
+  #     print("starting your game...")
+  #     print(f"Good luck.\n")
+  #     self.main_game_loop()
 
 
   def player_commands(self, command):
     command = command.lower()
-    if command == "exit":
-      self.playing = False
-      print("You are now exiting the game...")
-    elif command == "inventory":
-      self.player_inventory.view_inventory()
+
+    command_options = {
+      "look": self.look_around,
+      "quit": self.quit_game,
+      "inventory": self.inventory,
+      "pick up": self.inventory.add_item,
+      
+      "north": self.direction.north,
+      "south":self.direction.south,
+      "east": self.direction.east,
+      "west": self.direction.west
+
+    }
+    
+
+  def move_new_location(self, direction):
+    pass
 
  
 if __name__ == "__main__":
