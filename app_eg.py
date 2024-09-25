@@ -7,7 +7,7 @@ def start_game():
   # user_input = ""
   # for user_input in menu_options:
   print("Options: new/continue")
-  user_input = input()
+  user_input = input().lower()
   if user_input == "new":
     print("starting new game...\n")
     start_new_game()
@@ -22,7 +22,7 @@ def start_game():
 def new_game_test():
   print("New game has begun...")
   print("Let's start with your name: ")
-  name = input()
+  name = input().lower()
   print(f"Good luck, {name}\n")
   print("You wake up in a dimly lit room with a cold concrete floor.")
   print("As you stand you notice a large windowless door and an air vent close to the bed.")
