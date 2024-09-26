@@ -51,11 +51,22 @@ class basement_cell(room):
   def __init__(self):
     super().__init__("Basement cell", "Dimly lit cold, dark room")
 
-
-class basement_hallway(room):
+class locked_basement_hallway(room):
   def __init__(self):
     super().__init__("Basement hallway", "Dark hallway with flickering lights hanging from the roof", is_locked=True, key_required="Basement Hallway Key")
 
+class basement_cell_air_vent(room):
+  def __init__(self):
+    super().__init__("Basement cell air vent", "Small, dark cramped air vent with something shining at the end... it's a key", can_break=True)
+    key = item("Basement Hallway Key", "A rusty key that looks like it would in the door of the cell")
+    self.add_item(key)
 class end_basement_hallway(room):
   def __init__(self):
-    super().__init__("End of basement hallway", )
+    super().__init__("End of basement hallway", "Looks like there's a dead end here... but there's something on the ground. Another key")
+    key = item("Ground floor basement entrance key", "Newly cut shiny key")
+    self.add_item(key)
+
+class ground_floor_basement_entrance(room):
+  def __init__(self):
+    super().__init__("Ground floor basement entrance", "You can", is_locked=True, key_required="Ground floor basement entrance key")
+    # possibly end the game here
