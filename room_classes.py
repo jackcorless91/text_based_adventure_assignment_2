@@ -1,5 +1,6 @@
 from classes import player_inventory
 from player_class import player
+
 class item:
   def __init__(self, name, description):
     self.name = name 
@@ -114,6 +115,49 @@ class game:
 
   def main_game_loop(self):
     while self.is_running:
-      self.player_locatio.describe()
+      self.player_location.describe()
       command = input("Throughout this game you can follow the commands shown on screen or type 'quit' to exit at anytime: ").strip().lower()
       self.run_command(command)
+
+  def run_command(self, command):
+    if command == 'quit':
+      self.exit_game()
+    elif command == 'inventory':
+      self.player.view_inventory()
+    elif command == 'look':
+      self.look_around()
+  # continue with all commands from all rooms
+
+
+  def exit_game(self):
+    self.is_running = False
+    print("Thank you playing. You are exiting the game...")
+
+  def look_around(self):
+    self.player_location.describe()
+
+  def move_room(self, direction):
+    pass
+
+  def move_to_room(self, direction):
+    if direction in self.player_location.exits:
+      next_room = self.player_location.exits[direction]
+
+      if next_room.is_locked:
+        if self.player.has_item(next_room.key_required):
+          print(f"Good job! You used {next_room.key_required} to open the door.")
+          next_room.unlock()
+        else:
+          print("Hmmm it looks like this door is locked... try looking for a key.")
+          return
+
+      self.player_location = next_room
+      print(f"You have now entered {direction}")  
+    else:
+      print("No, you can't go that way.")
+
+
+
+if __name__ == "__main__":
+    game = game()
+    game.start_game()

@@ -16,4 +16,4 @@ class player():
       print("No items in your inventory :(.")
 
   def has_item(self, item_name):
-    pass
+    return any(item.name.lower() == item_name.lower() for item in self.inventory)
