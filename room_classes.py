@@ -1,24 +1,11 @@
 from classes import player_inventory
+class item:
+  def __init__(self, name, description):
+    self.name = name 
+    self.description = description
 
-# class room:
-#   def __init__(self, name, description):
-#     self.name = name
-#     self.description = description 
-#     self.exits = {}
-
-#   def room_exits(self, direction, location):
-#     self.exits = [location]
-
-#   def description(self):
-#     print(f"You are in {self.name}. {self.description}")
-#     if self.exits:
-#       print("You can can see a way out")
-
-
-# class cell(room):
-#   def __init__(self):
-#     super().__init__("cell", "")
-
+  def __str__(self):
+    return f"{self.name}: {self.description}"
 
 
 class room():
@@ -54,6 +41,10 @@ class room():
     self.is_locked = False
     print(f"{self.name} has now been unlocked.")
 
+  def break_open(self):
+    self.is_locked = False
+    print(f"Keys are for the weak, {self.name} is now broken down.")
+
 
 
 class basement_cell(room):
@@ -64,3 +55,7 @@ class basement_cell(room):
 class basement_hallway(room):
   def __init__(self):
     super().__init__("Basement hallway", "Dark hallway with flickering lights hanging from the roof", is_locked=True, key_required="Basement Hallway Key")
+
+class end_basement_hallway(room):
+  def __init__(self):
+    super().__init__("End of basement hallway", )
