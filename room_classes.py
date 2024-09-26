@@ -81,24 +81,39 @@ class ground_floor_basement_entrance(room):
 class game:
   def __init__ (self):
     self.is_running = True
-    self.player = player(f"{}")
+    self.player = player("Player")
     self.player_location = self.make_room()
 
-    def make_room(self):
-      basement_cell = basement_cell()
-      locked_basement_hallway = locked_basement_hallway()
-      basement_cell_air_vent = basement_cell_air_vent()
-      end_basement_hallway = end_basement_hallway()
-      ground_floor_basement_entrance = ground_floor_basement_entrance()
+  def make_room(self):
+    basement_cell = basement_cell()
+    locked_basement_hallway = locked_basement_hallway()
+    basement_cell_air_vent = basement_cell_air_vent()
+    end_basement_hallway = end_basement_hallway()
+    ground_floor_basement_entrance = ground_floor_basement_entrance()
 
-      basement_cell.add_exits("Open door", locked_basement_hallway)
-      basement_cell.add_exits("Open air vent", basement_cell_air_vent)
-      
-      basement_cell_air_vent.add_exits("Return to cell", basement_cell)
 
-      locked_basement_hallway.add_exits("Continue down hallway", end_basement_hallway)
-      locked_basement_hallway.add_exits("Walk up staircase", ground_floor_basement_entrance)
+    basement_cell.add_exits("Open door", locked_basement_hallway)
+    basement_cell.add_exits("Open air vent", basement_cell_air_vent)
+    basement_cell_air_vent.add_exits("Return to cell", basement_cell)
 
-      end_basement_hallway.add_exits("Return up hallway", locked_basement_hallway)
+    locked_basement_hallway.add_exits("Continue down hallway", end_basement_hallway)
+    locked_basement_hallway.add_exits("Walk up staircase", ground_floor_basement_entrance)
+    end_basement_hallway.add_exits("Return up hallway", locked_basement_hallway)
 
-    
+  def start_game(self):
+    print("Welcome to Jack's house of horrors.")
+    print("Start a new game or continue from save?") 
+    player_input = input().strip().lower()
+    if player_input == "new":
+      self.main_game_loop
+    elif player_input == "continue":
+      print("yet to create")
+      pass
+    else:
+      print("Invalid input, there are only two options it's not that hard lol.")
+
+  def main_game_loop(self):
+    while self.is_running:
+      self.player_locatio.describe()
+      command = input("Throughout this game you can follow the commands shown on screen or type 'quit' to exit at anytime: ").strip().lower()
+      self.run_command(command)
