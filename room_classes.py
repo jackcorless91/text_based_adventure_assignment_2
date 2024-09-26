@@ -1,4 +1,5 @@
 from classes import player_inventory
+from player_class import player
 class item:
   def __init__(self, name, description):
     self.name = name 
@@ -70,3 +71,34 @@ class ground_floor_basement_entrance(room):
   def __init__(self):
     super().__init__("Ground floor basement entrance", "You can", is_locked=True, key_required="Ground floor basement entrance key")
     # possibly end the game here
+
+
+
+
+
+
+
+class game:
+  def __init__ (self):
+    self.is_running = True
+    self.player = player(f"{}")
+    self.player_location = self.make_room()
+
+    def make_room(self):
+      basement_cell = basement_cell()
+      locked_basement_hallway = locked_basement_hallway()
+      basement_cell_air_vent = basement_cell_air_vent()
+      end_basement_hallway = end_basement_hallway()
+      ground_floor_basement_entrance = ground_floor_basement_entrance()
+
+      basement_cell.add_exits("Open door", locked_basement_hallway)
+      basement_cell.add_exits("Open air vent", basement_cell_air_vent)
+      
+      basement_cell_air_vent.add_exits("Return to cell", basement_cell)
+
+      locked_basement_hallway.add_exits("Continue down hallway", end_basement_hallway)
+      locked_basement_hallway.add_exits("Walk up staircase", ground_floor_basement_entrance)
+
+      end_basement_hallway.add_exits("Return up hallway", locked_basement_hallway)
+
+    
