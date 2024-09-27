@@ -10,12 +10,13 @@ class item:
     return f"{self.name}: {self.description}"
 
 
-class room():
+class room:
   def __init__(self, name, description, is_locked=False, key_required=None, can_break=False):
     self.name = name
     self.description = description
     self.exits = {}
     self.items = []
+    # itemssssss
     self.is_locked = is_locked
     self.key_required = key_required
     self.can_break = can_break
@@ -24,8 +25,8 @@ class room():
     self.exits[direction] = location
 
   def add_item(self, item):
-    if item in self.item:
-      self.item.append(item)
+    if item in self.items:
+      self.items.append(item)
     else:
       print("Item already already in inventory.")
 
@@ -163,3 +164,6 @@ class game:
 if __name__ == "__main__":
   game = game()
   game.start_game()
+# if __name__ == "__main__":
+#   game = Game()
+#   game.start_game()
