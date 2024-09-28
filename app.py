@@ -28,6 +28,7 @@ class Game:
     def start_game(self):
         print("Welcome to Jack's house of horrors.")
         print("Start a new game or continue from save?") 
+        print("Avaliable commands: 'new', or 'continue'")
         player_input = input().strip().lower()
         if player_input == "new":
             self.main_game_loop()
@@ -40,7 +41,7 @@ class Game:
     def main_game_loop(self):
         while self.is_running:
             self.player_location.describe()
-            print("Available commands: 'quit', 'inventory', 'look', or one of the exits.")
+            print("Available commands: 'quit', 'inventory', 'look', or enter one of the exits.")
             command = input("Enter your command: ").strip().lower()
             self.run_command(command)
 
@@ -66,11 +67,9 @@ class Game:
     def move_to_room(self, direction):
         next_room = self.player_location.exits[direction]
 
-        # Check if entering the air vent room to collect the key
         if isinstance(self.player_location, BasementCellAirVent):
             self.player_location.collect_key(self.player)
 
-        # Check if entering the end of basement hallway to collect the key
         if isinstance(self.player_location, EndBasementHallway):
             self.player_location.collect_key(self.player)
 
@@ -81,12 +80,11 @@ class Game:
                 self.player_location = next_room
                 print(f"You have now entered {next_room.name}.")
                 
-                # End the game when entering the Ground floor basement entrance
                 if isinstance(next_room, GroundFloorBasementEntrance):
                     print("Congratulations! You've escaped the basement!")
                     self.quit_game()
             else:
-                print("Hmm looks like this door is locked, you need a key to open it.")
+                print("Hmm looks like this door is locked, you need a key to open it. Keep looking...")
         else:
             self.player_location = next_room
             print(f"You have now entered {next_room.name}.")
