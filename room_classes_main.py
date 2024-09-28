@@ -1,4 +1,4 @@
-class player():
+class Player():
   def __init__(self, name):
     self.name = name
     self.inventory = []
@@ -97,7 +97,7 @@ class GroundFloorBasementEntrance(Room):
 class Game:
   def __init__(self):
     self.is_running = True
-    self.player = player("Player")
+    self.player = Player("Player")
     self.player_location = self.create_room()
 
   def create_room(self):
@@ -142,7 +142,7 @@ class Game:
       self.player.view_inventory()
     elif command == "look":
       self.look_around()
-    elif command.startwith("Take me to "):
+    elif command.startswith("Take me to "):
       self.move_to_room(command[10:])
 
   def quit_game(self):
@@ -161,8 +161,9 @@ class Game:
           print(f"Looks like you can use {next_room.key_required} to unlock the door.")
           next_room.unlock()
       elif next_room.locked_can_break:
-        if self.player.has_item(next_room.locked_can_break):
+        if self.player.has_item("crowbar"):
           print(f"Who needs keys? not us. Yo can use {next_room.locked_can_break} to break it open")
+          next_room.unlock()
       else:
         print("Hmm looks like this door is locked, you need a key to open it.")
         return 

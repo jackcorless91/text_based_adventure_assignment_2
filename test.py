@@ -1,192 +1,186 @@
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.inventory = []
+
+    def add_item(self, item):
+        self.inventory.append(item)
+        print(f"{item.name} has been added to your inventory.")
+
+    def view_inventory(self):
+        if self.inventory:
+            print("Current inventory contains:")
+            for item in self.inventory:
+                print(f" - {item.name}.")
+        else: 
+            print("No items in your inventory :(.")
+
+    def has_item(self, item_name):
+        return any(item.name.lower() == item_name.lower() for item in self.inventory)
+
 class Item:
     def __init__(self, name, description):
         self.name = name
         self.description = description
 
     def __str__(self):
-        return f"{self.name}: {self.description}"
+        return f"{self.name}: {self.description}."
 
 class Room:
-    def __init__(self, name, description, is_locked=False, required_key=None):
+    def __init__(self, name, description, is_locked=False, key_required=None):
         self.name = name
         self.description = description
         self.exits = {}
-        self.items = []  # List to hold items in the room
+        self.items = []
         self.is_locked = is_locked
-        self.required_key = required_key
+        self.key_required = key_required
 
-    def add_exit(self, direction, room):
-        if direction in self.exits:
-            print(f"Cannot add exit in direction {direction}; it already exists.")
-        else:
-            self.exits[direction] = room
+    def add_exits(self, direction, location):
+        self.exits[direction.lower()] = location
 
     def add_item(self, item):
-        self.items.append(item)
-
-    def remove_item(self, item):
-        self.items.remove(item)
+        if item not in self.items:
+            self.items.append(item)
 
     def describe(self):
-        print(f"You are in {self.name}. {self.description}")
-        if self.items:
-            print("You see the following items:")
-            for item in self.items:
-                print(f"- {item}")
+        print(f"You are in {self.name}, {self.description}.")
         if self.is_locked:
-            print("The room is locked. You need a key to enter.")
+            print("Hmm looks like this door is locked and requires a key to enter.")
         else:
-            if self.exits:
-                print("You can see the following exits:")
-                for direction in self.exits.keys():
-                    print(f"- {direction.capitalize()}")
+            print("This exit is open.")
+        
+        if self.exits:
+            print("In this room, you see the following exits:")
+            for direction in self.exits.keys():
+                print(f" - {direction}")
 
     def unlock(self):
         self.is_locked = False
-        print(f"{self.name} is now unlocked.")
+        print(f"{self.name} has now been unlocked.")
 
-class Kitchen(Room):
+class BasementCell(Room):
     def __init__(self):
-        super().__init__("Kitchen", "A cozy kitchen filled with the smell of fresh bread.")
-        key = Item("Golden Key", "A shiny golden key that unlocks the locked room.")
-        self.add_item(key)
+        super().__init__("Basement cell", "Dimly lit, cold, dark room with nothing but a bed and a crowbar...")
 
-class Hallway(Room):
+class LockedBasementHallway(Room):
     def __init__(self):
-        super().__init__("Hallway", "A long, dimly lit hallway.")
+        super().__init__("Basement hallway", "Dark hallway with flickering lights hanging from the roof", is_locked=True, key_required="Basement cell key")
 
-class Library(Room):
+class BasementCellAirVent(Room):
     def __init__(self):
-        super().__init__("Library", "A quiet library filled with ancient books.")
-        book = Item("Ancient Tome", "An old book filled with forgotten knowledge.")
-        self.add_item(book)
+        super().__init__("Basement cell air vent", "Small, dark cramped air vent with something shining at the end... it's a key.")
+        self.cell_key = Item("Basement cell key", "A rusty key that looks like it would fit in the door of the cell.")
+        self.add_item(self.cell_key)
 
-class Garden(Room):
+    def collect_key(self, player):
+        if self.cell_key in self.items:
+            player.add_item(self.cell_key)
+            self.items.remove(self.cell_key)
+
+class EndBasementHallway(Room):
     def __init__(self):
-        super().__init__("Garden", "A beautiful garden filled with colorful flowers.")
-        flower = Item("Flower", "A vibrant flower with a sweet fragrance.")
-        self.add_item(flower)
+        super().__init__("End of basement hallway", "Looks like there's a dead end here... but there's something on the ground. Another key!")
+        self.ground_floor_key = Item("Ground floor key", "Newly cut shiny key.")
+        self.add_item(self.ground_floor_key)
 
-class Bedroom(Room):
+    def collect_key(self, player):
+        if self.ground_floor_key in self.items:
+            player.add_item(self.ground_floor_key)
+            self.items.remove(self.ground_floor_key)
+
+class GroundFloorBasementEntrance(Room):
     def __init__(self):
-        super().__init__("Bedroom", "A serene bedroom with a comfortable bed.")
-        note = Item("Note", "A note that says 'Find the key!'.")
-        self.add_item(note)
-
-class LockedRoom(Room):
-    def __init__(self):
-        super().__init__("Locked Room", "A mysterious locked room.", is_locked=True, required_key="golden key")
-
-class Character:
-    def __init__(self, name):
-        self.name = name
-        self.inventory = []  # Player's inventory
-
-    def add_item(self, item):
-        self.inventory.append(item)
-        print(f"You picked up {item.name}.")
-
-    def remove_item(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            print(f"You dropped {item.name}.")
-        else:
-            print(f"You don't have a {item.name}.")
-
-    def has_item(self, item_name):
-        return any(item.name.lower() == item_name.lower() for item in self.inventory)
-
-    def show_inventory(self):
-        if self.inventory:
-            print("You have the following items:")
-            for item in self.inventory:
-                print(f"- {item}")
-        else:
-            print("Your inventory is empty.")
+        super().__init__("Ground floor basement entrance", "Huge iron door at the top of the staircase.", is_locked=True, key_required="Ground floor key")
 
 class Game:
     def __init__(self):
         self.is_running = True
-        self.player = Character("Hero")
-        self.current_location = self.create_rooms()
+        self.player = Player("Player")
+        self.player_location = self.create_room()
 
-    def create_rooms(self):
-        kitchen = Kitchen()
-        hallway = Hallway()
-        library = Library()
-        garden = Garden()
-        bedroom = Bedroom()
-        locked_room = LockedRoom()
+    def create_room(self):
+        basement_cell = BasementCell()
+        locked_basement_hallway = LockedBasementHallway()
+        basement_cell_air_vent = BasementCellAirVent()
+        end_basement_hallway = EndBasementHallway()
+        ground_floor_basement_entrance = GroundFloorBasementEntrance()
 
-        # Set exits
-        kitchen.add_exit("north", hallway)
-        hallway.add_exit("south", kitchen)
-        hallway.add_exit("east", library)
-        hallway.add_exit("west", garden)
-        hallway.add_exit("up", bedroom)  # Adding a new exit to the bedroom
-        bedroom.add_exit("down", hallway)
-        library.add_exit("west", hallway)
-        library.add_exit("north", locked_room)
-        locked_room.add_exit("south", library)
+        basement_cell.add_exits("open door", locked_basement_hallway)
+        basement_cell.add_exits("open air vent", basement_cell_air_vent)
+        basement_cell_air_vent.add_exits("return to cell", basement_cell)
 
-        return kitchen  # Start in the kitchen
+        locked_basement_hallway.add_exits("continue down hallway", end_basement_hallway)
+        locked_basement_hallway.add_exits("walk up staircase", ground_floor_basement_entrance)
+        end_basement_hallway.add_exits("return to hallway", locked_basement_hallway)
 
-    def start(self):
-        print("Welcome to the Adventure Game!")
-        self.main_loop()
+        return basement_cell
 
-    def main_loop(self):
-        while self.is_running:
-            self.current_location.describe()
-            command = input("Enter a command (or 'quit' to exit): ").strip().lower()
-            self.handle_command(command)
-
-    def handle_command(self, command):
-        if command == 'quit':
-            self.quit_game()
-        elif command == 'look':
-            self.look_around()
-        elif command.startswith('go '):
-            self.move_to_location(command[3:])
-        elif command.startswith('take '):
-            self.take_item(command[5:])
-        elif command == 'inventory':
-            self.player.show_inventory()
+    def start_game(self):
+        print("Welcome to Jack's house of horrors.")
+        print("Start a new game or continue from save?") 
+        player_input = input().strip().lower()
+        if player_input == "new":
+            self.main_game_loop()
+        elif player_input == "continue":
+            print("Yet to create this.")
+            self.is_running = False
         else:
-            print("I don't understand that command.")
+            print("Invalid input, there's only two options. You can do it lol.")
+      
+    def main_game_loop(self):
+        while self.is_running:
+            self.player_location.describe()
+            print("Available commands: 'quit', 'inventory', 'look', or one of the exits.")
+            command = input("Enter your command: ").strip().lower()
+            self.run_command(command)
+
+    def run_command(self, command):
+        if command == "quit":
+            self.quit_game()
+        elif command == 'inventory':
+            self.player.view_inventory()
+        elif command == "look":
+            self.look_around()
+        elif command in self.player_location.exits:
+            self.move_to_room(command)
+        else:
+            print("Invalid command or direction.")
 
     def quit_game(self):
         self.is_running = False
-        print("Thanks for playing!")
+        print("Thank you for playing. You are exiting the game...")
 
     def look_around(self):
-        self.current_location.describe()
+        self.player_location.describe()
 
-    def move_to_location(self, direction):
-        if direction in self.current_location.exits:
-            next_room = self.current_location.exits[direction]
+    def move_to_room(self, direction):
+        next_room = self.player_location.exits[direction]
 
-            if next_room.is_locked:
-                if self.player.has_item(next_room.required_key):
-                    print(f"You use the {next_room.required_key} to unlock the door.")
-                    next_room.unlock()
-                else:
-                    print("The door is locked. You need a key to enter.")
-                    return
+        # Check if entering the air vent room to collect the key
+        if isinstance(self.player_location, BasementCellAirVent):
+            self.player_location.collect_key(self.player)
 
-            self.current_location = next_room
-            print(f"You go {direction}.")
+        # Check if entering the end of basement hallway to collect the key
+        if isinstance(self.player_location, EndBasementHallway):
+            self.player_location.collect_key(self.player)
+
+        if next_room.is_locked:
+            if self.player.has_item(next_room.key_required):
+                print(f"Looks like you can use {next_room.key_required} to unlock the door.")
+                next_room.unlock()
+                self.player_location = next_room
+                print(f"You have now entered {next_room.name}.")
+                
+                # End the game when entering the Ground floor basement entrance
+                if isinstance(next_room, GroundFloorBasementEntrance):
+                    print("Congratulations! You've escaped the basement!")
+                    self.quit_game()
+            else:
+                print("Hmm looks like this door is locked, you need a key to open it.")
         else:
-            print("You can't go that way.")
-
-    def take_item(self, item_name):
-        for item in self.current_location.items:
-            if item.name.lower() == item_name.lower():
-                self.player.add_item(item)
-                self.current_location.remove_item(item)
-                return
-        print(f"There is no {item_name} here.")
+            self.player_location = next_room
+            print(f"You have now entered {next_room.name}.")
 
 if __name__ == "__main__":
     game = Game()
-    game.start()
+    game.start_game()
