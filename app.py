@@ -1,3 +1,5 @@
+import pickle
+
 from player_class import Player
 from item_class import Item
 from room_class import Room, BasementCell, LockedBasementHallway, BasementCellAirVent, EndBasementHallway, GroundFloorBasementEntrance
