@@ -1,10 +1,10 @@
 # Text Based Adventure Game
 
 ## Before getting started we need to do some setup
-This python application will be run in a virtual environment (venv) in the terminal. A venv is a mini virtual computer within your own thus creating an isolated environment where regardless of your computers confirgurations, downloads or settings it will run the same on all machines producing the same result.   
-When installing libraries like we are today this will also isolate it to our current working directory, to not affect the other projects on your machine by installing them globally.
+This python application will be run in a virtual environment (venv) in the terminal. A venv is a mini virtual computer within your own creating an isolated environment where regardless of your computers confirgurations, downloads or settings it will run the same on all machines producing the same result.   
+When installing libraries like we are today ti will also isolate it to our current working directory, to not affect the other projects on your machine by installing them globally.
 
-### Creating the virtual environment
+## Creating the virtual environment
 First we need to create the virtual environment, then we need to activate it.
 
 1. Create your project folder and open it in your code editor of choice.
@@ -23,7 +23,7 @@ python3 -m venv ./venv
 source venv/bin/activate
 ```
 
-### package download 
+## package download 
 Now that we have our virtual environment created let's download pickle.
 
 1. If your on python 3.8 or newer pickle is preinstalled. To check your version enter the following into your terminal:
@@ -50,3 +50,12 @@ pip install pickle5
 ```python
 import pickle5 as pickle
 ```
+
+
+## Legal and ethical impacts of pickle 
+
+Pickle is an open source data serilisation and deserilisation software library of python.
+
+### license
+- GNU Lesser General Public License v3 or later (LGPLv3+)  
+This is a free open source software license. This means any work created under it also holds its license, both original and modified versions. This allows there to transprancy and freedom of use while still being open source and accessable to everyone.

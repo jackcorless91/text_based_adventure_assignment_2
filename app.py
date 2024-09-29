@@ -26,6 +26,19 @@ class Game:
         end_basement_hallway.add_exits("return to hallway", locked_basement_hallway)
 
         return basement_cell
+    
+    def save_game(self):
+        with open("savegame.pkl", "wb") as f:
+            pickle.dump((self.player, self.player_location), f)
+            print("Game saved!")
+
+    def load_game(self):
+        try:
+            with open("savegame.pkl", "rb") as f:
+                self.player, self.player_location = pickle.load(f)
+                print("Game loaded!")
+        except FileNotFoundError:
+            print("No saved game found.")
 
     def start_game(self):
         print("Welcome to Jack's house of horrors.")
@@ -33,17 +46,21 @@ class Game:
         print("Avaliable commands: 'new', or 'continue'")
         player_input = input().strip().lower()
         if player_input == "new":
+            player_name = input("Enter your player name: ")
+            self.player = Player(player_name)
+            self.player_location = self.create_room()
             self.main_game_loop()
         elif player_input == "continue":
             print("Yet to create this.")
-            self.is_running = False
+            self.load_game()
+            self.main_game_loop()
         else:
-            print("Invalid input, there's only two options. You can do it lol.")
+            print("Invalid input, there's only two options.")
       
     def main_game_loop(self):
         while self.is_running:
             self.player_location.describe()
-            print("Available commands: 'quit', 'inventory', 'look', or enter one of the exits.")
+            print("Available commands: 'quit', 'inventory', 'look', 'save', or enter one of the exits.")
             command = input("Enter your command: ").strip().lower()
             self.run_command(command)
 
@@ -54,10 +71,12 @@ class Game:
             self.player.view_inventory()
         elif command == "look":
             self.look_around()
+        elif command == "save":
+            self.save_game()
         elif command in self.player_location.exits:
             self.move_to_room(command)
         else:
-            print("Invalid command or direction.")
+            print("Invalid command.")
 
     def quit_game(self):
         self.is_running = False
